@@ -70,6 +70,20 @@ public class ASCStockItem {
         return quantityInStock;
     }
 
+    public void setQuanity(int newQuantity) {
+        if(newQuantity >= 0) {
+            quantityInStock = newQuantity;
+        }
+    }
+
+    public String calculatePrice(int newQuantity) {
+        int poundsPrice = newQuantity * unitPricePounds;
+        int pencePrice = newQuantity * unitPricePence;
+        int penceToPounds = (int) Math.floor((double) pencePrice / 100);
+        int remainderPence = pencePrice % 100;
+        return String.format("%d.%02d", poundsPrice + penceToPounds, remainderPence);
+    }
+
     /**
      * Load a list of Ashers Sports Collectives from a CSV into a list
      * @return the list of sports collectives

@@ -31,6 +31,11 @@ public class ASCStockModel extends AbstractTableModel {
     }
 
     @Override
+    public String getColumnName(int i) {
+        return COLUMN_NAMES[i];
+    }
+
+    @Override
     public Object getValueAt(int rowIndex, int columnIndex) {
         ASCStockItem stock = stocks.get(rowIndex);
 
