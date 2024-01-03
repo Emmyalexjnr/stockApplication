@@ -4,17 +4,23 @@
  */
 package com.mycompany.stockcontrolapplication;
 
+import java.util.List;
+
 /**
  *
  * @author chukwuemeka
  */
 public class StockControlGUI extends javax.swing.JFrame {
 
+    private List<ASCStockItem> stocks;
     /**
      * Creates new form StockControlGUI
      */
     public StockControlGUI() {
+
         initComponents();
+        stocks = ASCStockItem.loadStockCSV();
+        StockTable.setModel(new ASCStockModel(stocks));
     }
 
     /**
@@ -26,17 +32,56 @@ public class StockControlGUI extends javax.swing.JFrame {
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
 
+        jScrollPane1 = new javax.swing.JScrollPane();
+        StockTable = new javax.swing.JTable();
+        BuyButton = new javax.swing.JButton();
+        SellButton = new javax.swing.JButton();
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setTitle("Stock Control with low stock reporting");
+
+        StockTable.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(StockTable);
+
+        BuyButton.setText("Buy");
+
+        SellButton.setText("Sell");
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 400, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.DEFAULT_SIZE, 661, Short.MAX_VALUE)
+                .addContainerGap())
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(BuyButton)
+                .addGap(30, 30, 30)
+                .addComponent(SellButton)
+                .addGap(29, 29, 29))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 300, Short.MAX_VALUE)
+            .addGroup(layout.createSequentialGroup()
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 345, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 68, Short.MAX_VALUE)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(BuyButton)
+                    .addComponent(SellButton))
+                .addGap(21, 21, 21))
         );
 
         pack();
@@ -78,5 +123,9 @@ public class StockControlGUI extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton BuyButton;
+    private javax.swing.JButton SellButton;
+    private javax.swing.JTable StockTable;
+    private javax.swing.JScrollPane jScrollPane1;
     // End of variables declaration//GEN-END:variables
 }

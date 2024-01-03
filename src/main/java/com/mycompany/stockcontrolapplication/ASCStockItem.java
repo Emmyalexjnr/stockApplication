@@ -19,7 +19,7 @@ import java.util.logging.Logger;
 public class ASCStockItem {
 
     private static final String DELIMITER = ",";
-    private static final int csvColumnLength = 2;
+    private static final int csvColumnLength = 6;
     private final String productCode;
     private String productTitle;
     private String description;
@@ -70,6 +70,10 @@ public class ASCStockItem {
         return quantityInStock;
     }
 
+    /**
+     * Load a list of Ashers Sports Collectives from a CSV into a list
+     * @return the list of sports collectives
+     */
     public static List<ASCStockItem> loadStockCSV() {
         final String INPUT_FILE_PATH = "AshersSportsCollective.csv";
         File inputFile = new File(INPUT_FILE_PATH);
@@ -87,10 +91,8 @@ public class ASCStockItem {
                     if (!line.isEmpty()) {
                         final String[] columns = line.split(DELIMITER);
                         if (columns.length == csvColumnLength) {
-                            String title = columns[0];
-                            String moduleCode = columns[1];
-//                            Module module = new ASCStockItem(title, moduleCode);
-//                            stocks.add(module);
+                            ASCStockItem stock = getAscStockItem(columns);
+                            stocks.add(stock);
                         }
                     }
                 }
@@ -106,6 +108,21 @@ public class ASCStockItem {
         }
 
         return stocks;
+    }
+
+    /**
+     * use the columns in CSV file to generate a stock row
+     * @param columns
+     * @return
+     */
+    private static ASCStockItem getAscStockItem(String[] columns) {
+        String code = columns[0];
+        String title = columns[1];
+        String description = columns[2];
+        int unitPricePounds = Integer.parseInt(columns[3]);
+        int unitPricePence = Integer.parseInt(columns[4]);
+        int quantity = Integer.parseInt(columns[5]);
+        return new ASCStockItem(code, title, description, unitPricePounds, unitPricePence, quantity);
     }
 
 }
