@@ -9,6 +9,7 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -23,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class StockControlGUI extends JFrame {
 
     private List<ASCStockItem> stocks;
+    private List<Transaction> transactions;
     /**
      * Creates new form StockControlGUI
      */
@@ -30,6 +32,7 @@ public class StockControlGUI extends JFrame {
 
         initComponents();
         stocks = ASCStockItem.loadStockCSV();
+        transactions = new ArrayList<Transaction>();
         StockTable.setModel(new ASCStockModel(stocks));
     }
 
@@ -166,16 +169,24 @@ public class StockControlGUI extends JFrame {
         ASCStockItem selectedStock = getSelectedItem(selectedProduct);
         assert selectedStock != null;
         int quantity = returnQuantity(selectedStock);
+
         int newQuantity = selectedStock.getQuantityInStock() - quantity;
         selectedStock.setQuanity(newQuantity);
         String amountSold = selectedStock.calculatePrice(newQuantity);
 
         StockTable.setModel(new ASCStockModel(stocks));
         String message = "You sold " + newQuantity +  " " +  selectedStock.getProductTitle() + " for £" + amountSold;
+        String code = selectedStock.getProductCode();
+        LocalDateTime now = LocalDateTime.now();
 
+        Transaction transaction = new Transaction(code, quantity, amountSold, now);
+        transaction.addObservers(selectedStock);
+        System.out.println(transaction.toString());
+        transactions.add(transaction);
         JOptionPane.showMessageDialog(null, message,
                 "Sold " + selectedStock.getProductTitle(), JOptionPane.INFORMATION_MESSAGE);
-
+        transaction.notifyObservers();
+//        transaction.removeObservers(selectedStock);
 
 
     }//GEN-LAST:event_SellButtonActionPerformed
@@ -265,17 +276,17 @@ public class StockControlGUI extends JFrame {
     
     public void quit() {
 
-//        try {
-//            Module.saveModuleStatisticsToFile(allModules);
-//        } catch (FileNotFoundException e) {
-//            //warn user
-//            System.out.println("\n\n!!!!! Unable to open output file !!!!!\n" + e.getMessage() + "\n");
-//        } catch (IOException e) {
-//            //warn user
-//            System.out.print("\n\n!!!!! File write error !!!!!\n" + e.getMessage() + "\n");
-//        }
-//        //end message
-//        System.out.println("\n\n***** Thank You for using this application *****\n");
+        try {
+            ASCStockItem.saveASCContentToFile(stocks);
+        } catch (FileNotFoundException e) {
+            //warn user
+            System.out.println("\n\n!!!!! Unable to open output file !!!!!\n" + e.getMessage() + "\n");
+        } catch (IOException e) {
+            //warn user
+            System.out.print("\n\n!!!!! File write error !!!!!\n" + e.getMessage() + "\n");
+        }
+        //end message
+        System.out.println("\n\n***** Thank You for using this application *****\n");
 
         System.exit(0);
 

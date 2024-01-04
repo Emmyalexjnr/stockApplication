@@ -4,28 +4,33 @@
  */
 package com.mycompany.stockcontrolapplication;
 
+import com.mycompany.stockcontrolapplication.interfaces.ObserverInterface;
+
+import javax.swing.*;
+import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import static java.nio.file.StandardOpenOption.CREATE;
+import static java.nio.file.StandardOpenOption.WRITE;
+
 /**
  *
  * @author chukwuemeka
  */
-public class ASCStockItem {
+public class ASCStockItem extends Stock implements ObserverInterface {
 
     private static final String DELIMITER = ",";
     private static final int csvColumnLength = 6;
-    private final String productCode;
-    private String productTitle;
-    private String description;
-    private int unitPricePounds;
-    private int unitPricePence;
-    private int quantityInStock;
 
     /**
      * constructor for ASCStock class
@@ -37,43 +42,8 @@ public class ASCStockItem {
      * @param quantityInStock
      */
     public ASCStockItem(String productCode, String productTitle, String description, int unitPricePounds, int unitPricePence, int quantityInStock){
+        super(productCode, productTitle, description, unitPricePounds, unitPricePence, quantityInStock);
 
-        this.productCode = productCode;
-        this.productTitle = productTitle;
-        this.description = description;
-        this.unitPricePence = unitPricePence;
-        this.unitPricePounds = unitPricePounds;
-        this.quantityInStock = quantityInStock;
-    }
-
-    public String getProductCode() {
-        return productCode;
-    }
-
-    public String getProductTitle() {
-        return productTitle;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public int getUnitPricePounds() {
-        return unitPricePounds;
-    }
-
-    public int getUnitPricePence() {
-        return unitPricePence;
-    }
-
-    public int getQuantityInStock() {
-        return quantityInStock;
-    }
-
-    public void setQuanity(int newQuantity) {
-        if(newQuantity >= 0) {
-            quantityInStock = newQuantity;
-        }
     }
 
     public String calculatePrice(int newQuantity) {
@@ -124,6 +94,47 @@ public class ASCStockItem {
         return stocks;
     }
 
+    public static void saveASCContentToFile(List<ASCStockItem> stocks) throws IOException, FileNotFoundException {
+        final String OUTPUT_FILE_PATH = "asc_item.csv";
+        //create path object
+        Path path = Paths.get(OUTPUT_FILE_PATH);
+
+        Files.deleteIfExists(path);
+
+        BufferedOutputStream buffer = new BufferedOutputStream(
+                Files.newOutputStream(path, CREATE, WRITE)
+        );
+
+        String stockReport = "";
+
+//        moduleReport += "Module Code " + DELIMITER;
+//        moduleReport += "Module Title " + DELIMITER;
+//        moduleReport += "Highest score " + DELIMITER;
+//        moduleReport += "Lowest score " + DELIMITER;
+//        moduleReport += "Average score " + DELIMITER;
+//        moduleReport += "Total passed " + DELIMITER;
+//        moduleReport += "Total failed " + "\r\n";
+        for (int i = 0; i < stocks.size(); i++) {
+            ASCStockItem stock = stocks.get(i);
+            stockReport += stock.getProductCode() + DELIMITER;
+            stockReport += stock.getProductTitle() + DELIMITER;
+            stockReport += stock.getDescription() + DELIMITER;
+            stockReport += stock.getUnitPricePounds() + DELIMITER;
+            stockReport += stock.getUnitPricePence() + DELIMITER;
+            stockReport += stock.getQuantityInStock() + "\r\n";
+        }// end of for loop
+
+        byte data[] = stockReport.getBytes();
+
+        buffer.write(data, 0, data.length);
+        // close buffer so stream writes to file
+        buffer.close();
+
+        //confirm data written
+        System.out.println("\n\nASCStocks updated to file at: " + path.toAbsolutePath().toString());
+    } // end of saveModuleStaticsToFile method
+
+
     /**
      * use the columns in CSV file to generate a stock row
      * @param columns
@@ -139,4 +150,12 @@ public class ASCStockItem {
         return new ASCStockItem(code, title, description, unitPricePounds, unitPricePence, quantity);
     }
 
+    @Override
+    public void update() {
+        if(quantityInStock < 5) {
+            String message = productTitle + " Quantity left: " + quantityInStock;
+            JOptionPane.showMessageDialog(null, message,
+                    "Low stock alert ", JOptionPane.INFORMATION_MESSAGE);
+        }
+    }
 }
