@@ -24,6 +24,7 @@ import javax.swing.table.DefaultTableModel;
 public class StockControlGUI extends JFrame {
 
     private List<ASCStockItem> stocks;
+//    private List
     private List<Transaction> transactions;
     /**
      * Creates new form StockControlGUI
@@ -32,6 +33,7 @@ public class StockControlGUI extends JFrame {
 
         initComponents();
         stocks = ASCStockItem.loadStockCSV();
+        stocks.addAll(MSMStockToStockAdaptor.loadMSMStockCSV());
         transactions = new ArrayList<Transaction>();
         StockTable.setModel(new ASCStockModel(stocks));
     }

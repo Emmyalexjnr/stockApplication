@@ -27,10 +27,17 @@ import static java.nio.file.StandardOpenOption.WRITE;
  *
  * @author chukwuemeka
  */
-public class ASCStockItem extends Stock implements ObserverInterface {
+public class ASCStockItem implements ObserverInterface {
 
     private static final String DELIMITER = ",";
     private static final int csvColumnLength = 6;
+
+    protected final String productCode;
+    protected String productTitle;
+    protected String description;
+    protected int unitPricePounds;
+    protected int unitPricePence;
+    protected int quantityInStock;
 
     /**
      * constructor for ASCStock class
@@ -42,8 +49,43 @@ public class ASCStockItem extends Stock implements ObserverInterface {
      * @param quantityInStock
      */
     public ASCStockItem(String productCode, String productTitle, String description, int unitPricePounds, int unitPricePence, int quantityInStock){
-        super(productCode, productTitle, description, unitPricePounds, unitPricePence, quantityInStock);
+//        super(productCode, productTitle, description, unitPricePounds, unitPricePence, quantityInStock);
+        this.productCode = productCode;
+        this.productTitle = productTitle;
+        this.description = description;
+        this.unitPricePence = unitPricePence;
+        this.unitPricePounds = unitPricePounds;
+        this.quantityInStock = quantityInStock;
 
+    }
+    public String getProductCode() {
+        return productCode;
+    }
+
+    public String getProductTitle() {
+        return productTitle;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public int getUnitPricePounds() {
+        return unitPricePounds;
+    }
+
+    public int getUnitPricePence() {
+        return unitPricePence;
+    }
+
+    public int getQuantityInStock() {
+        return quantityInStock;
+    }
+
+    public void setQuanity(int newQuantity) {
+        if(newQuantity >= 0) {
+            quantityInStock = newQuantity;
+        }
     }
 
     public String calculatePrice(int newQuantity) {
